@@ -1,7 +1,9 @@
-import mindsdb_sdk
 import sqlite3
 import time
 import traceback
+
+import mindsdb_sdk
+
 #you need to have an api key also visit mindsDB minds ok and copy the api key from thre
 MINDSDB_HOST = 'http://127.0.0.1'
 MINDSDB_PORT = 47334
@@ -102,7 +104,6 @@ def main():
         print("Failed to connect to MindsDB after multiple attempts. Exiting.")
         return
 
-    check_mindsdb_version(server)
 
     try:
         existing_dbs = server.databases.list()
