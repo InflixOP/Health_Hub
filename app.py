@@ -1,10 +1,10 @@
-
+import datetime
 import os
-from flask import Flask, render_template, request, jsonify
-from openai import OpenAI
+
 import mindsdb_sdk
 from dotenv import load_dotenv
-import datetime
+from flask import Flask, jsonify, render_template, request
+from openai import OpenAI
 
 load_dotenv()
 
@@ -27,7 +27,7 @@ def connect_to_mindsdb():
         print("Connected YAYYYY!")
         return server
     except Exception as error:
-        print(f"Failed to connect to MindsDB shit. Error: {error}")
+        print(f"Failed to connect to MindsDB. Error: {error}")
         return None
 
 server = connect_to_mindsdb()
@@ -49,11 +49,9 @@ def predict():
     symptom1 = data.get('symptom1', '').lower()
     symptom2 = data.get('symptom2', '').lower()
     symptom3 = data.get('symptom3', '').lower()
-    # tried many times but i think mindsDB has some problems so i just typed it manually(filhal i am working on it )
     print(f"Parsed data: age={age}, gender={gender}, symptoms={symptom1}, {symptom2}, {symptom3}")
     
-   diagnosis, explanation, confidence = predict_diagnosis(server, age, gender, symptom1, symptom2, symptom3)
-
+    diagnosis, explanation, confidence = predict_diagnosis(server, age, gender, symptom1, symptom2, symptom3)
     
     response = {'diagnosis': diagnosis, 'explanation': explanation, 'confidence': confidence}
     print(f"Sending response: {response}")
@@ -83,8 +81,7 @@ def generate_plan():
 
 def predict_diagnosis(server, age, gender, symptom1, symptom2, symptom3):
     try:
-      
-        if  symptom1 == 'fever' and symptom2 == 'cough' and symptom3 == 'fatigue':
+        if symptom1 == 'fever' and symptom2 == 'cough' and symptom3 == 'fatigue':
             return "Common Cold", "The combination of fever, cough, and fatigue is often indicative of a common cold.", 80.0
 
         query = f"""
@@ -99,7 +96,7 @@ def predict_diagnosis(server, age, gender, symptom1, symptom2, symptom3):
         print(f"Executing query: {query}")
         
         result = server.query(query)
-        print(f"Query executed successfully")
+        print("Query executed successfully")
         
         result_list = result.fetch()
         print(f"Query result: {result_list}")
@@ -116,6 +113,7 @@ def predict_diagnosis(server, age, gender, symptom1, symptom2, symptom3):
     except Exception as e:
         print(f"Error during prediction: {str(e)}")
         return "Unable to predict", f"An error occurred during prediction: {str(e)}", 0.0
+
 def get_chatbot_response(user_message):
     try:
         completion = client.chat.completions.create(
